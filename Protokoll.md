@@ -59,11 +59,16 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     memcpy(mock_cookie, data, size);
     mock_cookie[size] = '\0';
 
-    // Kernlogik direkt im Speicher mit Fuzz-Eingaben füttern
-    get_session_by_id(mock_cookie);
-
+    t_session *sess = get_session_by_id(mock_cookie);
+    if (sess) {
+            // Force reading from the structure
+            volatile t_user *u = sess->logged_in_user;
+            (void)u;
+    }
+    
     free(mock_cookie);
     return 0;
+}
 }
 ```
 
