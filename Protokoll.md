@@ -79,5 +79,79 @@ During compilation of the fuzzing harness using `clang`, a critical structural v
 // at the very end of get_session_by_id inside src/session.c
 return NULL;
 
+This Output comes from Kali Linux (server did not crash)
+```
+┌──(kali㉿kali)-[~/Downloads/potato2-main]
+└─$ clang -fsanitize=fuzzer,address -I./src fuzz_session.c src/session.c -o fuzzer_session
+fuzz_session.c:18:5: error: use of undeclared identifier
+      't_session'
+   18 |     t_session *sess = get_session_by_id(mock_cookie);
+      |     ^~~~~~~~~
+fuzz_session.c:18:16: error: use of undeclared identifier                       
+      'sess'
+   18 |     t_session *sess = get_session_by_id(mock_cookie);
+      |                ^~~~
+fuzz_session.c:19:9: error: use of undeclared identifier                        
+      'sess'
+   19 |     if (sess) {
+      |         ^~~~
+fuzz_session.c:21:22: error: unknown type name 't_user'                         
+   21 |             volatile t_user *u = sess->logged_in_user;
+      |                      ^
+fuzz_session.c:21:34: error: use of undeclared identifier                       
+      'sess'
+   21 |             volatile t_user *u = sess->logged_in_user;
+      |                                  ^~~~
+5 errors generated.                                                             
+src/session.c:59:41: warning: comparison of array
+      'sessions[i]->session_id' equal to a null pointer is always false
+      [-Wtautological-pointer-compare]
+   59 |         if(sessions[i] == NULL || sessions[i]->session_id == NULL) 
+      |                                   ~~~~~~~~~~~~~^~~~~~~~~~    ~~~~
+src/session.c:64:1: warning: non-void function does not                         
+      return a value in all control paths [-Wreturn-type]
+   64 | }
+      | ^
+2 warnings generated.                                                           
+                                                                                
+┌──(kali㉿kali)-[~/Downloads/potato2-main]
+└─$ ./fuzzer_session corpus/
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 1327574267
+INFO: Loaded 1 modules   (28 inline 8-bit counters): 28 [0x55975da6deb0, 0x55975da6decc), 
+INFO: Loaded 1 PC tables (28 PCs): 28 [0x55975da6ded0,0x55975da6e090), 
+INFO:        1 files found in corpus/
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: seed corpus: files: 1 min: 513b max: 513b total: 513b rss: 37Mb
+#2      INITED cov: 2 ft: 2 corp: 1/513b exec/s: 0 rss: 38Mb
+        NEW_FUNC[1/1]: 0x55975da24bf0 in get_session_by_id (/home/kali/Downloads/potato2-main/fuzzer_session+0x151bf0) (BuildId: e2b462b18197102056fcdbc94e915f82b50faea8)
+#7      NEW    cov: 7 ft: 8 corp: 2/807b lim: 513 exec/s: 0 rss: 38Mb L: 294/513 MS: 5 CMP-CrossOver-ChangeBinInt-ShuffleBytes-EraseBytes- DE: "\377\377\377\377"-
+#53     REDUCE cov: 7 ft: 8 corp: 2/763b lim: 513 exec/s: 0 rss: 41Mb L: 250/513 MS: 1 EraseBytes-
+#61     REDUCE cov: 7 ft: 8 corp: 2/751b lim: 513 exec/s: 0 rss: 41Mb L: 238/513 MS: 3 InsertByte-ChangeBit-EraseBytes-
+#62     REDUCE cov: 7 ft: 8 corp: 2/707b lim: 513 exec/s: 0 rss: 43Mb L: 194/513 MS: 1 EraseBytes-
+#74     REDUCE cov: 7 ft: 8 corp: 2/621b lim: 513 exec/s: 0 rss: 43Mb L: 108/513 MS: 2 ChangeBinInt-EraseBytes-
+#79     REDUCE cov: 7 ft: 8 corp: 2/617b lim: 513 exec/s: 0 rss: 43Mb L: 104/513 MS: 5 ChangeBit-CopyPart-PersAutoDict-CopyPart-EraseBytes- DE: "\377\377\377\377"-
+#198    REDUCE cov: 7 ft: 8 corp: 2/588b lim: 513 exec/s: 0 rss: 43Mb L: 75/513 MS: 4 ChangeBinInt-CMP-ChangeBit-EraseBytes- DE: "\001\002\000\000\000\000\000\000"-
+#226    REDUCE cov: 7 ft: 8 corp: 2/567b lim: 513 exec/s: 0 rss: 43Mb L: 54/513 MS: 3 CMP-InsertByte-EraseBytes- DE: "\310\000\000\000\000\000\000\000"-
+#227    REDUCE cov: 7 ft: 8 corp: 2/566b lim: 513 exec/s: 0 rss: 43Mb L: 53/513 MS: 1 EraseBytes-
+#238    REDUCE cov: 7 ft: 8 corp: 2/558b lim: 513 exec/s: 0 rss: 43Mb L: 45/513 MS: 1 EraseBytes-
+#258    REDUCE cov: 7 ft: 8 corp: 2/549b lim: 513 exec/s: 0 rss: 43Mb L: 36/513 MS: 5 ChangeBit-ShuffleBytes-ChangeBit-InsertByte-EraseBytes-
+#259    REDUCE cov: 7 ft: 8 corp: 2/543b lim: 513 exec/s: 0 rss: 43Mb L: 30/513 MS: 1 EraseBytes-
+#262    REDUCE cov: 7 ft: 8 corp: 2/539b lim: 513 exec/s: 0 rss: 43Mb L: 26/513 MS: 3 ChangeByte-ShuffleBytes-EraseBytes-
+#267    REDUCE cov: 7 ft: 8 corp: 2/532b lim: 513 exec/s: 0 rss: 43Mb L: 19/513 MS: 5 ShuffleBytes-ChangeBinInt-InsertByte-ChangeBit-EraseBytes-
+#280    REDUCE cov: 7 ft: 8 corp: 2/524b lim: 513 exec/s: 0 rss: 43Mb L: 11/513 MS: 3 ChangeByte-ChangeBit-EraseBytes-
+#362    REDUCE cov: 7 ft: 8 corp: 2/523b lim: 513 exec/s: 0 rss: 43Mb L: 10/513 MS: 2 ChangeByte-EraseBytes-
+#477    REDUCE cov: 7 ft: 8 corp: 2/521b lim: 513 exec/s: 0 rss: 43Mb L: 8/513 MS: 5 ChangeBinInt-InsertByte-PersAutoDict-ChangeByte-EraseBytes- DE: "\001\002\000\000\000\000\000\000"-
+#515    REDUCE cov: 7 ft: 8 corp: 2/519b lim: 513 exec/s: 0 rss: 43Mb L: 6/513 MS: 3 CMP-InsertByte-EraseBytes- DE: "e\000\000\000"-
+#522    REDUCE cov: 7 ft: 8 corp: 2/517b lim: 513 exec/s: 0 rss: 43Mb L: 4/513 MS: 2 InsertByte-EraseBytes-
+#545    REDUCE cov: 7 ft: 8 corp: 2/516b lim: 513 exec/s: 0 rss: 43Mb L: 3/513 MS: 3 ChangeByte-ChangeByte-EraseBytes-
+#579    REDUCE cov: 7 ft: 8 corp: 2/515b lim: 513 exec/s: 0 rss: 43Mb L: 2/513 MS: 4 CopyPart-ChangeByte-ChangeByte-EraseBytes-
+#581    REDUCE cov: 7 ft: 8 corp: 2/514b lim: 513 exec/s: 0 rss: 43Mb L: 1/513 MS: 2 ChangeBit-EraseBytes-
+#1048576        pulse  cov: 7 ft: 8 corp: 2/514b lim: 4096 exec/s: 349525 rss: 458Mb
+#2097152        pulse  cov: 7 ft: 8 corp: 2/514b lim: 4096 exec/s: 349525 rss: 461Mb
+#4194304        pulse  cov: 7 ft: 8 corp: 2/514b lim: 4096 exec/s: 299593 rss: 461Mb
+#8388608        pulse  cov: 7 ft: 8 corp: 2/514b lim: 4096 exec/s: 322638 rss: 461Mb
+#16777216       pulse  cov: 7 ft: 8 corp: 2/514b lim: 4096 exec/s: 328965 rss: 461Mb
+```
 
 
