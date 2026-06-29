@@ -1,0 +1,25 @@
+The goal of this exercise is it to gain a shell exploiting the binary compiled from the referenced code base. Source: https://github.com/edgecase1/potato2
+
+Use a Linux operating system to compile the binary. It is allowed to compile it with 
+
+executable stack (-z execstack) 
+without stack canaries (-fno-stack-protector)  
+ASLR disabled (echo 0 | sudo tee /proc/sys/kernel/randomize_va_space) -no-pie
+Your tasks:
+
+identify a vulnerability and explain it in detail. What insecure function/programming practice is used and are there restrictions? How can the vulnerability exploited? [2 points]
+create a payload to change the instruction pointer. Explain how you came up with the correct payload size. Set it to a predefined value (you can choose an internal function address). [2 points]
+start a shell using shellcode (on the stack) using a stack-based buffer overflow attack [3]
+start a shell using a stack-based-buffer overflow using a ret2libc attack [4]
+create a custom shellcode or run a ROP attack. You may link the program statically [3]
+Resources:
+
+Python template (uses pwntools)
+RIP overwrite 
+Introduction to x64 Linux Binary Exploitation (Part 1)
+Ret2libc
+Introduction to x64 Linux Binary Exploitation (Part 2)—return into libc
+ROP
+Introduction to x64 Linux Binary Exploitation (Part 3)- RoP Chains
+Shellcode
+see file attached (exec /bin/sh working on X86-64)
