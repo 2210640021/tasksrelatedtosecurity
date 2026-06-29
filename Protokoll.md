@@ -78,6 +78,7 @@ During compilation of the fuzzing harness using `clang`, a critical structural v
 ```c
 // at the very end of get_session_by_id inside src/session.c
 return NULL;
+```
 
 This Output comes from Kali Linux (server did not crash)
 ```c
