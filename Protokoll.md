@@ -80,7 +80,7 @@ During compilation of the fuzzing harness using `clang`, a critical structural v
 return NULL;
 
 This Output comes from Kali Linux (server did not crash)
-```
+```c
 ┌──(kali㉿kali)-[~/Downloads/potato2-main]
 └─$ clang -fsanitize=fuzzer,address -I./src fuzz_session.c src/session.c -o fuzzer_session
 fuzz_session.c:18:5: error: use of undeclared identifier
